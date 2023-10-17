@@ -1,0 +1,16 @@
+.config-container {
+    width: 300px;
+    margin: 50px auto;
+    border: 1px solid #ccc;
+    padding: 20px;
+    box-shadow: 2px 2px 10px #aaa;
+}
+
+.config-item {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+}

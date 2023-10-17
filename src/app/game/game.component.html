@@ -1,0 +1,29 @@
+<div *ngIf="isGameOver">
+    <h2>Game Over!</h2>
+    <p>Correct guesses: {{ correctGuesses }}</p>
+    <p><button (click)="goToConfiguration()">Play Again</button></p>
+  </div>
+<div *ngIf="!isGameOver">
+    <p>Correct guesses: {{ correctGuesses }}</p>
+    <p>Lives Remaining: {{ 3 - incorrectGuesses }}</p>
+    <div class="game-container">
+        <div class="songs-column">
+            <button *ngFor="let song of songs" (click)="playSong(song)">{{ song.name }}</button>
+            <h2 *ngIf="!hasPreview">{{message}}</h2>
+            <audio id="preview" controls>
+                <source id="audioSource" src="" type="audio/mpeg">
+                Your browser does not support the audio element.
+              </audio>
+        </div>
+    <div class="artists-column">
+      <button 
+        *ngFor="let artist of artists" 
+        [ngClass]="{'correct': artist.isCorrect, 'incorrect': artist.isClicked && !artist.isCorrect}" 
+        (click)="checkArtist(artist)"
+      >
+        {{ artist.name }}
+      </button>
+    </div>
+  </div>
+</div>
+  
