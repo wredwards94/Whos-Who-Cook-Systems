@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { Router } from '@angular/router';
 import fetchFromSpotify, { request } from "../../services/api";
 
 const AUTH_ENDPOINT =
@@ -11,24 +12,34 @@ const TOKEN_KEY = "whos-who-access-token";
   styleUrls: ["./home.component.css"],
 })
 export class HomeComponent implements OnInit {
-  constructor() {}
+  constructor(private router: Router) {}
 
-  genres: String[] = ["House", "Alternative", "J-Rock", "R&B"];
+  genres: String[] = ["House", "Alternative", "J-Rock", "R&B", "Pop"];
   selectedGenre: String = "";
   authLoading: boolean = false;
   configLoading: boolean = false;
   token: String = "";
+  selectedSongCount = 1;
+  selectedArtistCount = 2;
 
   ngOnInit(): void {
     this.authLoading = true;
     const storedTokenString = localStorage.getItem(TOKEN_KEY);
     if (storedTokenString) {
-      const storedToken = JSON.parse(storedTokenString);
+      const storedToken = JSON.parse(storedTokenString) || {};
+      const storedSettings = localStorage.getItem('gameSettings');
       if (storedToken.expiration > Date.now()) {
         console.log("Token found in localstorage");
         this.authLoading = false;
         this.token = storedToken.value;
-        this.loadGenres(storedToken.value);
+        this.loadGenres(this.token);
+        if(storedSettings){
+          const settings = JSON.parse(storedSettings);
+          this.selectedGenre = settings.genre;
+          this.selectedSongCount = settings.songCount;
+          this.selectedArtistCount = settings.artistCount;
+        }
+        console.log("return");
         return;
       }
     }
@@ -47,6 +58,7 @@ export class HomeComponent implements OnInit {
 
   loadGenres = async (t: any) => {
     this.configLoading = true;
+    try {
     const response = await fetchFromSpotify({
       token: t,
       endpoint: "recommendations/available-genre-seeds",
@@ -54,11 +66,28 @@ export class HomeComponent implements OnInit {
     console.log(response);
     this.genres = response.genres;
     this.configLoading = false;
+  }
+  catch (error) {
+    console.error("Error fetching genres:", error);
+  } finally {
+    this.configLoading = false;
+  }
   };
 
   setGenre(selectedGenre: any) {
     this.selectedGenre = selectedGenre;
     console.log(this.selectedGenre);
     console.log(TOKEN_KEY);
+  }
+
+  startGame(): void {
+    const settings = {
+      genre: this.selectedGenre,
+      songCount: this.selectedSongCount,
+      artistCount: this.selectedArtistCount
+    };
+    localStorage.setItem('gameSettings', JSON.stringify(settings)); 
+    console.log('starting');
+    this.router.navigate(['/game'], { queryParams: { token: this.token } });
   }
 }
