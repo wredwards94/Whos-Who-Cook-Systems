@@ -14,7 +14,7 @@ const TOKEN_KEY = "whos-who-access-token";
 export class HomeComponent implements OnInit {
   constructor(private router: Router) {}
 
-  genres: String[] = ["House", "Alternative", "J-Rock", "R&B", "Pop"];
+  genres: String[] = ["House", "Alternative", "J-Rock", "R&B", "Pop", "Hip-Hop"];
   selectedGenre: String = "";
   authLoading: boolean = false;
   configLoading: boolean = false;

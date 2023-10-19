@@ -1,21 +1,21 @@
 <div *ngIf="authLoading || configLoading">Loading...</div>
 <div class="config-container" *ngIf="!authLoading && !configLoading">
-  <h2>Game Configuration</h2>
-  <div class="config-item">
-      <label>Genre:</label>
-      <select [(ngModel)]="selectedGenre">
-        <option [value]=""></option>
-        <option *ngFor="let genre of genres" [value]="genre">{{genre}}</option>
-      </select>
-  </div>
-  <div class="config-item">
-      <label>Songs per guess:</label>
-      <input type="number" min="1" max="10" [(ngModel)]="selectedSongCount" />
-  </div>
-  <div class="config-item">
-      <label>Number of artists:</label>
-      <input type="number" min="2" max="4" [(ngModel)]="selectedArtistCount" />
-  </div>
-  <button (click)="startGame()">Start Game</button>
+    <h1>Who's Who?</h1>
+    <div class="config-item">
+        <label>Genre:</label>
+        <select class="form-select form-select-lg mb-3"
+                [(ngModel)]="selectedGenre">
+            <option [value]=""></option>
+            <option *ngFor="let genre of genres" [value]="genre">{{genre}}</option>
+        </select>
+    </div>
+    <div class="config-item">
+        <label for="selectedSongCount" class="form-label">Songs per Guess: {{selectedSongCount}}</label>
+        <input type="range" class="form-range" min="1" max="6" [id]="selectedSongCount" [(ngModel)]="selectedSongCount">
+    </div>
+    <div class="config-item">
+        <label for="selectedArtistCount" class="form-label">Artists per Guess: {{selectedArtistCount}}</label>
+        <input type="range" class="form-range" min="2" max="4" id="selectedArtistCount" [(ngModel)]="selectedArtistCount">
+    </div>
+    <button type="button" class="btn btn-secondary btn-lg" (click)="startGame()">Start Game</button>
 </div>
-

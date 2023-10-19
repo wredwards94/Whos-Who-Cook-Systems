@@ -1,5 +1,5 @@
 .config-container {
-    width: 300px;
+    width: 400px;
     margin: 50px auto;
     border: 1px solid #ccc;
     padding: 20px;
@@ -13,4 +13,8 @@
 label {
     display: block;
     margin-bottom: 10px;
+}
+
+h1 {
+    padding-bottom: 20px;
 }

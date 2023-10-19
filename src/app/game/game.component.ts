@@ -1,7 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import fetchFromSpotify, { request } from "../../services/api";
-
 
 @Component({
   selector: 'app-game',
@@ -17,7 +16,6 @@ export class GameComponent implements OnInit {
   artistName: string = ''
   songCount = 1
   artistCount = 2
-
 
   correctGuesses: number = 0
   incorrectGuesses: number = 0
@@ -45,21 +43,26 @@ export class GameComponent implements OnInit {
   }
 
   async fetchSongs(count: number): Promise<void> {
-    const offset = Math.floor(Math.random() * 100) + 1
+    const offset = Math.floor(Math.random() * 500) + 1
     const SEARCH_URL = `search?q=artist%3A${this.artistName}&type=track&limit=${count}&offset=${offset}`
     try {
       const response = await fetchFromSpotify({
         token: this.token,
         endpoint: SEARCH_URL,
       });
-      if (response.tracks && response.tracks.items) {     
-        this.songs = response.tracks.items.map((track: any) => ({
-          id: track.id,
-          name: track.name,
-          sampleUrl: track.preview_url,
-          correctArtistId: this.artistId,
-        }));
+      if (response.tracks && response.tracks.items) {
+          for(const key in response.tracks.items) {
+            console.log('getting tracks: ' + response.tracks.items)
+          }
+
+          this.songs = response.tracks.items.map((track: any) => ({
+            id: track.id,
+            name: track.name,
+            sampleUrl: track.preview_url,
+            correctArtistId: this.artistId,
+          }));
         console.log(response);
+        this.checkSongsArray(this.songs)
       }
     }
     catch (error) {
@@ -67,6 +70,13 @@ export class GameComponent implements OnInit {
     }
   }
   
+  private checkSongsArray(checkSongs: any[]) {
+    if(checkSongs.length === 0) {
+      console.log('No Songs!')
+      this.fetchSongs(this.songCount)
+    }
+  }
+
   async fetchArtists(count: number): Promise<void> {
     const offset = Math.floor(Math.random() * 1000) + 1
     const SEARCH_URL = `search?q=genre%3A${this.genre}&type=artist&limit=${count}&offset=${offset}`
@@ -96,7 +106,7 @@ export class GameComponent implements OnInit {
   playSong(song: any): void {
     if(song.sampleUrl == null){
       console.log("no preview available")
-      this.message = `No preview available for {song.name}`
+      this.message = `No preview available for ${song.name}`
       this.hasPreview = false
     }
     else {
@@ -115,6 +125,7 @@ export class GameComponent implements OnInit {
 }
 
   checkArtist(artist: any): void {
+    if(this.songs.length === this.songCount) {
       if (this.songs[0].correctArtistId === artist.id) {
         artist.isCorrect = true
         this.correctGuesses++
@@ -125,6 +136,7 @@ export class GameComponent implements OnInit {
       if (this.incorrectGuesses >= 3) {
         this.isGameOver = true
       }
+    }
 
       (async () => {
         await this.fetchArtists(this.artistCount)
